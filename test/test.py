@@ -30,11 +30,11 @@ async def test_project(dut):
 
     for i in range(0x100):
         await ClockCycles(dut.clk, 1)
-        assert dut.top.data.value == i & 0xFFFFFFFF
+        assert dut.top.data.value == i & 0xFFFFFF
 
     # Test wrapping at bit width
-    dut.top.uut.acc.value = (1 << 32) - 0x100
-    for i in range((1 << 32) - 0x100, (1 << 32) + 0x100):
+    dut.top.uut.acc.value = (1 << 24) - 0x100
+    for i in range((1 << 24) - 0x100, (1 << 24) + 0x100):
         await ClockCycles(dut.clk, 1)
         # print(dut.top.data.value, i)
-        assert dut.top.data.value == i & 0xFFFFFFFF
+        assert dut.top.data.value == i & 0xFFFFFF
