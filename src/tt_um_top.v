@@ -17,15 +17,15 @@ module tt_um_top(
 );
 
 wire data_out;
-wire _unused_ok = &{ui_in, uio_in, ena};
+wire _unused_ok = &{uio_in, ena};
 assign uo_out = {7'b0000000, data_out};
 assign uio_oe = 8'b00000000;
 assign uio_out = 8'b00000000;
 
 parameter ACC_WIDTH = 24;
-parameter ADD_WIDTH = 1;
+parameter ADD_WIDTH = 8;
 wire [ACC_WIDTH-1:0] data;
-wire [ADD_WIDTH-1:0] add_value = {ADD_WIDTH{1'b1}};
+wire [ADD_WIDTH-1:0] add_value = ui_in;
 
 // Instantiate the accumulator module
 accumulator #(
