@@ -11,6 +11,9 @@ module accumulator #(
     // Internal accumulator register
     reg [ACC_WIDTH-1:0] acc;
 
+    wire [ACC_WIDTH-1:0] extended_add_value;
+    assign extended_add_value = { {ACC_WIDTH-ADD_WIDTH{1'b0}}, add_value };
+
     // Always block triggered on the rising edge of the clock or the falling edge of the reset
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -18,7 +21,7 @@ module accumulator #(
             acc <= {ACC_WIDTH{1'b0}};
         end else begin
             // On the rising edge of the clock, add the input value to the accumulator
-            acc <= acc + add_value;
+            acc <= acc + extended_add_value;
         end
     end
 
