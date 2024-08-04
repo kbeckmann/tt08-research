@@ -26,10 +26,8 @@ async def test_project(dut):
     dut._log.info("Test project behavior")
 
     # Set the input values you want to test
-    dut.ui_in.value = 20
-    dut.uio_in.value = 30
+    dut.ui_in.value = 0
 
-    # Test for 1 ms @ 25 MHz
-    await ClockCycles(dut.clk, 25000)
-
-    # assert dut.uo_out.value == 50
+    for i in range(0x20000):
+        await ClockCycles(dut.clk, 1)
+        assert dut.top.data.value == i & 0xFFFF
