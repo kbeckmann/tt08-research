@@ -22,10 +22,10 @@ assign uo_out = {7'b0000000, data_out};
 assign uio_oe = 8'b00000000;
 assign uio_out = 8'b00000000;
 
-parameter ACC_WIDTH = 24;
-parameter ADD_WIDTH = 8;
+parameter ACC_WIDTH = 64;
+parameter ADD_WIDTH = 64;
 wire [ACC_WIDTH-1:0] data;
-wire [ADD_WIDTH-1:0] add_value = ui_in;
+wire [ADD_WIDTH-1:0] add_value = {ui_in, ui_in, ui_in, ui_in, ui_in, ui_in, ui_in, ui_in};
 
 // Instantiate the accumulator module
 accumulator_rca #(
