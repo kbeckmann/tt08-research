@@ -26,15 +26,20 @@ async def test_project(dut):
     dut._log.info("Test project behavior")
 
     # Set the input values you want to test
-    dut.ui_in.value = 0
 
-    for i in range(0x100):
+    acc = 0
+    for i in range(1, 0x100):
+        dut.ui_in.value = i
         await ClockCycles(dut.clk, 1)
-        assert dut.top.data.value == i & 0xFFFFFF
+        assert dut.top.data.value == acc & 0xFFFFFF
+        acc += i
 
     # Test wrapping at bit width
-    dut.top.uut.acc.value = (1 << 24) - 0x100
-    for i in range((1 << 24) - 0x100, (1 << 24) + 0x100):
+    acc = (1 << 24) - 0x100
+    dut.top.uut.acc.value = acc
+    for i in range(1, 0x100):
+        dut.ui_in.value = i 
         await ClockCycles(dut.clk, 1)
         # print(dut.top.data.value, i)
-        assert dut.top.data.value == i & 0xFFFFFF
+        assert dut.top.data.value == acc & 0xFFFFFF
+        acc += i
