@@ -28,7 +28,7 @@ wire [ACC_WIDTH-1:0] data;
 wire [ADD_WIDTH-1:0] add_value = {ui_in, ui_in, ui_in, ui_in, ui_in, ui_in, ui_in, ui_in};
 
 // Instantiate the accumulator module
-accumulator_rca #(
+accumulator #(
     .ACC_WIDTH(ACC_WIDTH),
     .ADD_WIDTH(ADD_WIDTH)
 ) uut (
