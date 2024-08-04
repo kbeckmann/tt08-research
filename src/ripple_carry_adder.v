@@ -10,7 +10,7 @@ module ripple_carry_adder #(parameter WIDTH = 24) (
     genvar i;
     generate
         for (i = 0; i < WIDTH; i = i + 1) begin: adder
-            if (i == 0) begin
+            if (i == 0) begin: gen_first
                 full_adder fa (
                     .a(a[i]),
                     .b(b[i]),
@@ -18,7 +18,7 @@ module ripple_carry_adder #(parameter WIDTH = 24) (
                     .sum(sum[i]),
                     .cout(carry[i])
                 );
-            end else begin
+            end else begin: gen_others
                 full_adder fa (
                     .a(a[i]),
                     .b(b[i]),
