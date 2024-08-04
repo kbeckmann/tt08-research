@@ -22,7 +22,7 @@ assign uo_out = {7'b0000000, data_out};
 assign uio_oe = 8'b00000000;
 assign uio_out = 8'b00000000;
 
-parameter ACC_WIDTH = 16;
+parameter ACC_WIDTH = 32;
 parameter ADD_WIDTH = 1;
 wire [ACC_WIDTH-1:0] data;
 wire [ADD_WIDTH-1:0] add_value = {ADD_WIDTH{1'b1}};
