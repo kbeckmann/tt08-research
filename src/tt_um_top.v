@@ -91,13 +91,13 @@ assign audio_sample = counter[10] ? 8'hFF : 8'h00;
     .vpos(pix_y)
   );
 
-reg [9:0] vsync_r;
+reg vsync_r;
 reg [9:0] counter_vsync;
-wire [9:0] moving_x = pix_x + counter_vsync;
+wire _unused_pix = &{pix_x, pix_y};
 
-assign R = video_active ? {moving_x[5], pix_y[2]} : 2'b00;
-assign G = video_active ? {moving_x[6], pix_y[2]} : 2'b00;
-assign B = video_active ? {moving_x[7], pix_y[5]} : 2'b00;
+assign R = video_active ? {counter_vsync[9:8]} : 2'b00;
+assign G = video_active ? {counter_vsync[7:6]} : 2'b00;
+assign B = video_active ? {counter_vsync[5:4]} : 2'b00;
 
 always @(posedge clk) begin
   if (~rst_n) begin
