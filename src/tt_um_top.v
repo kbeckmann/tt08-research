@@ -16,19 +16,29 @@ module tt_um_top(
   input  wire       rst_n     // reset_n - low to reset
 );
 
-reg data_out;
+wire data_out;
 wire _unused_ok = &{ui_in, uio_in, ena};
 assign uo_out = {7'b0000000, data_out};
 assign uio_oe = 8'b00000000;
 assign uio_out = 8'b00000000;
 
-always @(posedge clk) begin
-  if (~rst_n) begin
-    data_out <= 1'b0;
-  end else begin
-    data_out <= ~data_out;
-  end
-end
+parameter ACC_WIDTH = 32;
+parameter ADD_WIDTH = 1;
+wire [ACC_WIDTH-1:0] data;
+wire [ADD_WIDTH-1:0] add_value = {ADD_WIDTH{1'b1}};
+
+// Instantiate the accumulator module
+accumulator #(
+    .ACC_WIDTH(ACC_WIDTH),
+    .ADD_WIDTH(ADD_WIDTH)
+) uut (
+    .clk(clk),
+    .rst_n(rst_n),
+    .add_value(add_value),
+    .data(data)
+);
+
+assign data_out = data[ACC_WIDTH-1]; // Use the MSB of the accumulator
 
 endmodule
 
