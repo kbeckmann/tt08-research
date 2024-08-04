@@ -19,6 +19,9 @@ project:
   source_files:
     - "tt_um_top.v"
     - "accumulator.v"
+    - "accumulator_rca.v"
+    - "ripple_carry_adder.v"
+    - "full_adder.v"
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
