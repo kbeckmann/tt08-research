@@ -3,6 +3,10 @@
 * SPDX-License-Identifier: Apache-2.0
 */
 
+// | Utilisation (%) | Wire length (um) |
+// |-----------------|------------------|
+// | 14.19           | 5015             |
+
 `default_nettype none
 
 module tt_um_top(
@@ -16,19 +20,30 @@ module tt_um_top(
   input  wire       rst_n     // reset_n - low to reset
 );
 
+wire [15:0] recip;
+wire [8:0]  denom = {uio_in[0], ui_in};
+wire        start = uio_in[1];
+
 reg data_out;
 wire _unused_ok = &{ui_in, uio_in, ena};
-assign uo_out = {7'b0000000, data_out};
-assign uio_oe = 8'b00000000;
-assign uio_out = 8'b00000000;
+assign uo_out = recip[15:8];
+assign uio_oe = 8'b11111111; // this is just for testing utilization
+assign uio_out = recip[7:0];
 
-always @(posedge clk) begin
-  if (~rst_n) begin
-    data_out <= 1'b0;
-  end else begin
-    data_out <= ~data_out;
-  end
-end
+// module recip16 (
+//   input clk,
+//   input start,
+//   input [8:0] denom,
+//   output [15:0] recip
+// );
+
+recip16 recip16_uut (
+  .clk(clk),
+  .start(start),
+  .denom(denom),
+  .recip(recip)
+);
+
 
 endmodule
 
