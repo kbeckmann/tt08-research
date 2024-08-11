@@ -1,6 +1,7 @@
 import tt_um_top_v from './tt_um_top.v?raw';
 import hvsync_gen_v from './hvsync_gen.v?raw';
 import pdm_v from './pdm.v?raw';
+import voice_v from './voice.v?raw';
 
 export const synth = {
   name: 'Synth',
@@ -10,5 +11,6 @@ export const synth = {
     'tt_um_top.v': tt_um_top_v,
     'pdm.v': pdm_v,
     'hvsync_gen_v': hvsync_gen_v,
+    'voice_v': voice_v,
   },
 };

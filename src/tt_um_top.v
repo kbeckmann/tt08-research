@@ -1,7 +1,6 @@
 /*
-* Copyright (c) 2024 Konrad Beckmann
-* SPDX-License-Identifier: Apache-2.0
-*/
+ * Public domain
+ */
 
 `default_nettype none
 
@@ -23,10 +22,17 @@ module tt_um_top(
   input  wire       rst_n     // reset_n - low to reset
 );
 
+
 // ------------------------------
 // Audio signals
 wire audio_pdm;
 wire [7:0] audio_sample;
+
+// Assign IO
+assign uo_out = 8'b00000000;
+assign uio_out = {audio_pdm, 7'b0000000};
+assign uio_oe = 8'b10000000;
+wire _unused_ok = &{ena, ui_in, uio_in};
 
 `ifdef VERILATOR
   // assign clk_hz = 48000 * 21; // Close enough to 1MHz, but integer factor of 48kHz
@@ -36,29 +42,6 @@ wire [7:0] audio_sample;
   assign audio_out = {audio_sample, 8'b0};
 `endif
 
-// ------------------------------
-// VGA signals
-wire hsync;
-wire vsync;
-wire [1:0] R;
-wire [1:0] G;
-wire [1:0] B;
-wire video_active;
-wire [9:0] pix_x;
-wire [9:0] pix_y;
-
-// TinyVGA PMOD
-assign uo_out = {hsync, B[0], G[0], R[0], vsync, B[1], G[1], R[1]};
-
-// Audio PMOD
-assign uio_out = {audio_pdm, 7'b0000000};
-assign uio_oe = 8'b10000000;
-
-// Suppress unused signals warning
-wire _unused_ok = &{ena, ui_in, uio_in};
-
-// ------------------------------
-// Audio start
 pdm #(.N(8)) pdm_gen(
   .clk(clk),
   .rst_n(rst_n),
@@ -66,54 +49,58 @@ pdm #(.N(8)) pdm_gen(
   .pdm_out(audio_pdm)
 );
 
-reg [24:0] counter;
-always @(posedge clk) begin
-  if (~rst_n) begin
-    counter <= 0;
-  end else begin
-    counter <= counter + 1;
-  end
-end
-
-assign audio_sample = counter[10] ? 8'hFF : 8'h00;
-
-// Audio end
-
 // ------------------------------
-// VGA start
-  hvsync_generator hvsync_gen(
-    .clk(clk),
-    .reset(~rst_n),
-    .hsync(hsync),
-    .vsync(vsync),
-    .display_on(video_active),
-    .hpos(pix_x),
-    .vpos(pix_y)
-  );
 
-reg vsync_r;
-reg [9:0] counter_vsync;
-wire _unused_pix = &{pix_x, pix_y};
+  wire [11:0] voice1;
+  wire [11:0] pulse1;
+  wire [ 7:0] control1;
+  wire [15:0] freq1;
+  wire [ 7:0] att_dec;
+  wire [ 7:0] sus_rel;
 
-assign R = video_active ? {counter_vsync[9:8]} : 2'b00;
-assign G = video_active ? {counter_vsync[7:6]} : 2'b00;
-assign B = video_active ? {counter_vsync[5:4]} : 2'b00;
-
-always @(posedge clk) begin
-  if (~rst_n) begin
-    vsync_r <= 0;
-    counter_vsync <= 0;
-  end else begin
-    vsync_r <= vsync;
-    if (~vsync_r & vsync) begin
-      counter_vsync <= counter_vsync + 1;
+`ifdef VERILATOR
+  reg [24:0] counter;
+  always @(posedge clk) begin
+    if (~rst_n) begin
+      counter <= 0;
     end else begin
-      counter_vsync <= counter_vsync;
+      counter <= counter + 1;
     end
   end
-end
 
-// VGA end
+  assign freq1 = 16'h1234;
+  assign pulse1 = 12'b010000000000;
+  wire gate1 = counter[17:0] < (1 << 16);
+  assign control1 = {7'b0001000, gate1};
+  assign att_dec = 8'h29;
+  assign sus_rel = 8'h79;
+`else
 
+  // All control signals are dynamic
+  assign freq1 = {uio_in, uio_in};
+  assign pulse1 = {uio_in[3:0], uio_in};
+  assign control1 = ui_in;
+  assign att_dec = uio_in;
+  assign sus_rel = ui_in;
+
+`endif
+
+  wire msb;
+  wire _unused_ok_msb = msb;
+
+  voice #()
+      Voice1(
+          .clk_1MHz(clk),
+          .reset(~rst_n),
+          .frequency(freq1),
+          .pulsewidth(pulse1),
+          .control(control1),
+          .Att_dec(att_dec),
+          .Sus_Rel(sus_rel),
+          .PA_MSB_in(),
+          .PA_MSB_out(msb),
+          .voice(voice1)
+      );
+    assign audio_sample = voice1 >> 4;
+  
 endmodule
-
