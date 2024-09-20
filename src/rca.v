@@ -24,7 +24,7 @@ module rca #(
   // assign result = A + B + {{WIDTH{1'b0}}, Cin};
   // assign Sum = A + B;//result[WIDTH-1:0];
   // assign Cout = result[WIDTH];
-  assign {Cout, Sum} = A + A + B + {{WIDTH{1'b0}}, Cin};
+  assign {Cout, Sum} = A + B + {{WIDTH{1'b0}}, Cin};
 
 endmodule
 
