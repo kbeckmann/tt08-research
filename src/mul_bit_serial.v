@@ -13,7 +13,7 @@ module mul_bit_serial #(
 );
 
     reg [WIDTH*2-1:0] partial_product;
-    reg [$clog2(WIDTH):0] bit_counter;
+    reg [$clog2(WIDTH)-1:0] bit_counter;
     reg multiplying;
     wire [WIDTH*2-1:0] sum;
     wire cout;
@@ -49,10 +49,12 @@ module mul_bit_serial #(
                     partial_product <= sum;
                 end
 
-                // Not worth changing to an RCA
+                // Not worth changing to an RCA, it actually increases area
                 bit_counter <= bit_counter + 1;
 
-                if (bit_counter == WIDTH) begin
+                // This trick only works for power-of-two WIDTH
+                // if (bit_counter == (WIDTH-1)) begin
+                if (&bit_counter) begin
                     multiplying <= 1'b0;
                     output_valid <= 1'b1;
                 end
