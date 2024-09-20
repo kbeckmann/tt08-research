@@ -77,12 +77,13 @@ async def test_mul_bit_serial(dut):
         dut.tt_um_top_instance.start = 1
         await ClockCycles(dut.clk, 1)
         dut.tt_um_top_instance.start = 0
+        await ClockCycles(dut.clk, 1)
         
         # for i in range(50):
         #     print(dut.tt_um_top_instance.start, dut.uo_out[0].value, dut.uo_out[1].value, dut.tt_um_top_instance.mul_result, dut.tt_um_top_instance.mul_valid)
         #     await ClockCycles(dut.clk, 1)
 
-        # print("----")
+        print("----")
 
         # Wait until the result is ready
         while dut.tt_um_top_instance.mul_valid == 0:

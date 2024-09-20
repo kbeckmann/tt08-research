@@ -32,13 +32,13 @@ module mul_bit_serial #(
 
 
     always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
+        if (~rst_n) begin
             partial_product <= 0;
             bit_counter <= 0;
             multiplying <= 1'b0;
             output_valid <= 1'b0;
         end else begin
-            if (start && !multiplying) begin
+            if (start & ~multiplying) begin
                 partial_product <= 0;
                 bit_counter <= 0;
                 multiplying <= 1'b1;
@@ -58,8 +58,6 @@ module mul_bit_serial #(
                     multiplying <= 1'b0;
                     output_valid <= 1'b1;
                 end
-            end else begin
-                output_valid <= 1'b0;
             end
         end
     end
