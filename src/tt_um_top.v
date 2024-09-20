@@ -48,7 +48,7 @@ module tt_um_top (
   // Start when input_valid goes from high to low
   wire start = prev_input_valid && !input_valid;
 
-  mul_inferred #(
+  mul_bit_serial #(
       .WIDTH(16)
   ) multiplier (
       .clk(clk),
